@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
 
 namespace OOPR_LR2
 {
+    delegate void AnonymousDelegate(int x);
     public partial class Form1 : MaterialForm
     {
         Faculty[] faculties;
@@ -35,7 +29,7 @@ namespace OOPR_LR2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            faculties = new Faculty[2];//10
+            faculties = new Faculty[2];
             Teacher[] teachers = new Teacher[] { new Teacher("Лисенко С.М." , "Чоловік", "xtozna.gmail.com", "0678684321", 1),
                                                  new Teacher("Кисіль В.В."  , "Чоловік", "xtozna.gmail.com", "0678655321", 2),
                                                  new Teacher("Пасічник О.С.", "Чоловік", "xtozna.gmail.com", "0678684345", 3),
@@ -99,12 +93,36 @@ namespace OOPR_LR2
             {
                 textBox1.Text += "Студенти факультету " + faculties[i].name + "\r\n";
                 setRandomMarks(faculties[i]);
+                faculties[i].sortDelegate = (x, y) => x.exam.min().CompareTo(y.exam.min());//2 5 лямбда вираз 1
                 faculties[i].enroll();
                 for (int j = 0; j < faculties[i].applicants.Count; j++) {
                     textBox1.Text += "Студент " + faculties[i].applicants[j].displayData() + "\r\n";
                 }
-                faculties[i].SaveToFile("Faculty" + i + ".dat");
+                ISaveable fac = faculties[i];//1 інтерфейсні посилання
+                fac.SaveToFile("Faculty" + i + ".dat");
                 textBox1.Text += "\r\n";
+            }
+            //5
+            {
+                // Анонімні методи
+                AnonymousDelegate anonymousDelegate1 = delegate (int x)
+                {
+                    textBox1.Text += "Анонімний метод 1: " +x + "\r\n";
+                };
+
+                AnonymousDelegate anonymousDelegate2 = delegate (int x)
+                {
+                    textBox1.Text += "Анонімний метод 2: " + x * 2 + "\r\n";
+                };
+
+                AnonymousDelegate anonymousDelegate3 = delegate (int x)
+                {
+                    textBox1.Text += "Анонімний метод 3: " + (x + 5).ToString() + "\r\n";
+                };
+
+                anonymousDelegate1(3); // Виведе: Анонімний метод 1: 3
+                anonymousDelegate2(3); // Виведе: Анонімний метод 2: 6
+                anonymousDelegate3(3); // Виведе: Анонімний метод 3: 8
             }
         }
 
@@ -139,8 +157,17 @@ namespace OOPR_LR2
             }
         }
     }
+    public interface ISaveable //1  Визначити
+    {
+        void SaveToFile(string filePath);
+        Applicant this[int index] { get; set; }//1 інтерфейсні індексатори
+    }
+    public interface ITaskrequired: ISaveable //1 наслідування інтерфейсів
+    {
+        string Data { get; set; }//1 інтерфейсні властивості
+    }
     [Serializable]
-    class Mark
+    public class Mark
     {
         public int value { get; private set; }
         public int subjectID { get; private set; }
@@ -171,7 +198,7 @@ namespace OOPR_LR2
 
     }
     [Serializable]
-    class Exam {
+    public class Exam {
         public DateTime date { get; private set; }
         public Mark subject1 { get; private set; }
         public Mark subject2 { get; private set; }
@@ -191,9 +218,12 @@ namespace OOPR_LR2
         public decimal averege() {
             return ((decimal)subject1.value + (decimal)subject2.value + (decimal)subject3.value) / 3;
         }
+        public int min() {
+            return Math.Min(subject1.value, Math.Min(subject2.value, subject3.value));
+        }
     }
     [Serializable]
-    abstract class Person {//4
+    public abstract class Person {
         public string name { get; set; }
         public string gender { get; set; }
         public string email { get; set; }
@@ -216,7 +246,7 @@ namespace OOPR_LR2
         public abstract void registerOnFaculty(Faculty faculty);
         public virtual string displayData() {
             return "ПІБ: " + name + "; Номер тел. " + phoneNumber + "; email: " + email;
-        }//9
+        }
         public void changeFirstName(string firstName)
         {
             name = name.Split(' ')[0] + " " + firstName + " " + name.Split(' ')[2];
@@ -230,7 +260,7 @@ namespace OOPR_LR2
         } 
     }
     [Serializable]
-    sealed class Applicant: Person{//4 7 9(в ієрархії але не може мати віртуальну функцію бо sealed)
+    public sealed class Applicant: Person{
         public Exam exam { get; private set; }
         public Applicant() : base() { }
         public Applicant(string name, string gender, string email, string phoneNumber) : base(name, gender, email, phoneNumber) { }
@@ -238,11 +268,11 @@ namespace OOPR_LR2
         public override void registerOnFaculty(Faculty faculty) {
             faculty.applicants.Add(this);
             doExam(faculty);
-        }//8
+        }
         public override string displayData()
         {
-            return base.displayData() + "; Середній бал " + displayExam();//6
-        }//8
+            return base.displayData() + "; Середній бал " + displayExam();
+        }
         public string displayExam() {
             return exam.averege().ToString("F2");
         }
@@ -255,22 +285,22 @@ namespace OOPR_LR2
         }
     }
     [Serializable]
-    class Teacher: Person {//4
+    public class Teacher: Person {
         public int subjectID { get; private set; }
-        new public string email { get; private set; }//5
+        new public string email { get; private set; }
         public Teacher() : base() { this.subjectID = 0; }
         public Teacher(string name, string gender, string email, string phoneNumber, int subjectID) : base(name, gender, email, phoneNumber) { this.subjectID = subjectID; }
 
         public override void registerOnFaculty(Faculty faculty) {
             faculty.teachers.Add(this);
-        }//8
+        }
         public sealed override string displayData()
         {
-            return base.displayData() + " " + subjectID;//6
-        }//7 8
+            return base.displayData() + " " + subjectID;
+        }
         public virtual void changeMark(Mark mark, int value) {
             mark.evaluation(value, this);
-        }//9
+        }
         public void changeMark(Exam exam, int value)
         {
             changeMark(exam.subject1, value);
@@ -300,12 +330,16 @@ namespace OOPR_LR2
         }
     }
     [Serializable]
-    class Faculty {
+    public class Faculty: ISaveable // використати
+    {
         public string name { get; private set; }
         public int[] subjectIDs { get; private set; }
         public int numberOfStudents { get; private set; }
         public List<Teacher> teachers { get; private set; }
         public List<Applicant> applicants { get; private set; }
+        [Serializable]
+        public delegate int SortDelegate(Applicant x, Applicant y);//2 //3 Параметри-значення
+        public SortDelegate sortDelegate { get; set; }
 
         public Faculty() {
             this.name = "default faculty name";
@@ -329,7 +363,10 @@ namespace OOPR_LR2
             return this.applicants;
         }
         public void sortApplicants() {
-            this.applicants.Sort((x, y) => x.exam.averege().CompareTo(y.exam.averege()));
+            if (sortDelegate == null)
+                this.applicants.Sort((x, y) => x.exam.averege().CompareTo(y.exam.averege()));//5 лямбда вираз 2
+            else
+                this.applicants.Sort((x, y) => sortDelegate(x, y));//2 5 лямбда вираз 3
         }
 
         public void SaveToFile(string filePath)
@@ -339,7 +376,7 @@ namespace OOPR_LR2
                     BinaryFormatter formatter = new BinaryFormatter();
                     formatter.Serialize(fileStream, this);
                 }
-        }//11
+        }
         public static Faculty LoadFromFile(string filePath)
         {
             Faculty loadedData = null;
@@ -351,11 +388,43 @@ namespace OOPR_LR2
                 }
 
             return loadedData;
-        }//11
+        }
+
+        //4
+        public Applicant this[int index]
+        {
+            get
+            {
+                if (index >= 0 && index < applicants.Count)
+                    return applicants[index];
+                else
+                    throw new IndexOutOfRangeException();
+            }
+            set
+            {
+                if (index >= 0 && index < applicants.Count)
+                    applicants[index] = value;
+                else
+                    throw new IndexOutOfRangeException();
+            }
+        }
+        //4
+        public Applicant this[string name]
+        {
+            get
+            {
+                for (int i = 0; i < applicants.Count; i++)
+                {
+                    if (applicants[i].name == name)
+                        return applicants[i];
+                }
+                return null; 
+            }
+        }
     }
 
 
-    //12
+    delegate void Task3Delegate(ref int b, out int c, int[] numbers, int a = 10);//3 параметри-посилання, вихідні параметри, параметри-масиви, параметри за замовчуванням
     class LinkedListNode
     {
         public Faculty faculty { get; set; }

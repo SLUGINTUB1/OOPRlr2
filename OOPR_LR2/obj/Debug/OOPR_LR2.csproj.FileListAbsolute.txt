@@ -10,3 +10,15 @@ D:\Навчання\2024 4 семестр\ООПР\OOPR_LR2\OOPR_LR2\obj\Debug\O
 D:\Навчання\2024 4 семестр\ООПР\OOPR_LR2\OOPR_LR2\obj\Debug\OOPR_LR2.pdb
 D:\Навчання\2024 4 семестр\ООПР\OOPR_LR2\OOPR_LR2\bin\Debug\MaterialSkin.dll
 D:\Навчання\2024 4 семестр\ООПР\OOPR_LR2\OOPR_LR2\obj\Debug\OOPR_LR2.csproj.CopyComplete
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\bin\Debug\OOPR_LR2.exe.config
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\bin\Debug\OOPR_LR2.exe
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\bin\Debug\OOPR_LR2.pdb
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\bin\Debug\MaterialSkin.dll
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\obj\Debug\OOPR_LR2.csproj.AssemblyReference.cache
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\obj\Debug\OOPR_LR2.Form1.resources
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\obj\Debug\OOPR_LR2.Properties.Resources.resources
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\obj\Debug\OOPR_LR2.csproj.GenerateResource.cache
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\obj\Debug\OOPR_LR2.csproj.CoreCompileInputs.cache
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\obj\Debug\OOPR_LR2.csproj.CopyComplete
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\obj\Debug\OOPR_LR2.exe
+D:\Навчання\2024 4 семестр\ООПР\OOPR_LR3\OOPR_LR2\obj\Debug\OOPR_LR2.pdb
